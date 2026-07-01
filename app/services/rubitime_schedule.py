@@ -23,7 +23,7 @@ AVAILABLE_SLOT_DESCRIPTION = "Этот слот открыт для записи
 AVAILABLE_SLOT_COLOR_ID = "8"
 AVAILABLE_SLOT_TRANSPARENCY = "transparent"
 AVAILABLE_SLOT_STATUS = "tentative"
-AVAILABLE_SLOT_ID_PREFIX = "available_"
+AVAILABLE_SLOT_ID_PREFIX = "available"
 AVAILABLE_SLOT_MARKER_KEY = "rubitime_slot_type"
 AVAILABLE_SLOT_MARKER_VALUE = "available"
 AVAILABLE_SLOT_SOURCE_KEY = "rubitime_source"
@@ -169,8 +169,8 @@ class RubitimeScheduleSyncService:
 
     def build_event(self, slot: RubitimeSlot) -> GoogleEventPayload:
         tz = self._settings.event_timezone
-        # Генерировать ID с префиксом avail (только a-v и цифры для Google Calendar API)
-        slot_id = f"avail{slot.start.strftime('%Y%m%d%H%M')}"
+        # Генерировать ID с префиксом available (только a-v, цифры и подчеркивание для Google Calendar API)
+        slot_id = f"available{slot.start.strftime('%Y%m%d%H%M')}"
         return GoogleEventPayload(
             event_id=slot_id,
             summary=AVAILABLE_SLOT_SUMMARY,
@@ -193,12 +193,8 @@ class RubitimeScheduleSyncService:
 
     def _slot_event_matches(self, event: dict[str, Any]) -> bool:
         event_id = str(event.get("id") or "").strip()
-        summary = str(event.get("summary") or "").strip()
         # Искать по префиксу ID (новый способ)
         if event_id.startswith(AVAILABLE_SLOT_ID_PREFIX):
-            return True
-        # Резервный вариант: по summary (старый способ для старых событий)
-        if summary == AVAILABLE_SLOT_SUMMARY:
             return True
         return False
 
