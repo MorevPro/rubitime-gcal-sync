@@ -127,8 +127,7 @@ class EventFormatter:
             f"Комментарий клиента: {_as_str(data.get('comment'))}",
             f"Комментарий из карточки клиента: {_as_str(data.get('cardcomment') or data.get('card_comment') or data.get('client_comment'))}",
             "",
-            "Журнал: https://rubitime.ru/profile/",
-            f"Номер записи: {record_id} ;",
+            f"Открыть запись: https://rubitime.ru/profile/analytic/history/{record_id}",
         ]
 
         description = "\n".join(lines).rstrip()
@@ -142,12 +141,12 @@ class EventFormatter:
         )
 
         source_url = _as_str(data.get("url"))
-        source: dict[str, str] = {}
-        if source_url:
-            source = {
-                "title": "Rubitime",
-                "url": source_url,
-            }
+        admin_url = f"https://rubitime.ru/profile/analytic/history/{record_id}"
+        # Используем ссылку на админку как source для быстрого перехода из календаря
+        source: dict[str, str] = {
+            "title": "Открыть запись",
+            "url": admin_url,
+        }
 
         extended_private: dict[str, str] = {
             "rubitime_record_id": str(record_id),
