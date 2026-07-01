@@ -92,12 +92,17 @@ class EventFormatter:
 
         start_raw = _first_present(data.get("record"), data.get("date"))
         start_dt = _parse_datetime_text(start_raw, tz)
+        
+        # Если не удалось распарсить дату записи, пробуем создать событие с текущим временем
+        if start_dt is None:
+            start_dt = datetime.now(timezone(timedelta(hours=3)))
+        
         end_dt = (
             end_from_seance_length(start_dt, duration_minutes)
-            if start_dt and duration_minutes > 0
+            if duration_minutes > 0
             else None
         )
-        if start_dt is not None and end_dt is None:
+        if end_dt is None:
             end_dt = end_from_seance_length(start_dt, 60)
 
         start_block: dict[str, Any] = {}

@@ -91,7 +91,12 @@ def _request_meta(request: Request) -> tuple[str, str]:
 
 async def _read_request_body(request: Request) -> bytes | None:
     try:
-        return await request.body()
+        # Добавляем таймаут 10 секунд, чтобы избежать зависания при неверном Content-Length
+        return await asyncio.wait_for(request.body(), timeout=10.0)
+    except asyncio.TimeoutError:
+        method, path = _request_meta(request)
+        log.error("webhook_request_body_timeout", method=method, path=path, timeout_seconds=10)
+        return None
     except ClientDisconnect:
         method, path = _request_meta(request)
         log.warning("webhook_client_disconnected", method=method, path=path)

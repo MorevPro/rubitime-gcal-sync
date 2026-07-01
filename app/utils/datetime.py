@@ -13,16 +13,22 @@ def _timezone_for_name(name: str) -> ZoneInfo | timezone:
         return timezone.utc
 
 
-def parse_start_datetime(value: str, timezone: str) -> datetime:
+def parse_start_datetime(value: str, timezone_name: str) -> datetime | None:
     """Parse a webhook datetime string into timezone-aware datetime."""
     normalized = value.replace("Z", "+00:00").replace(" ", "T")
     try:
         dt = datetime.fromisoformat(normalized)
-    except ValueError:
-        dt = datetime.strptime(value.strip(), "%Y-%m-%d %H:%M:%S")
+    except (ValueError, TypeError):
+        try:
+            dt = datetime.strptime(value.strip(), "%Y-%m-%d %H:%M:%S")
+        except (ValueError, TypeError):
+            return None
 
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=_timezone_for_name(timezone))
+        try:
+            dt = dt.replace(tzinfo=_timezone_for_name(timezone_name))
+        except Exception:
+            pass
     return dt
 
 

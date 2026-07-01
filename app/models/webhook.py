@@ -28,7 +28,7 @@ class WebhookRecordData(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     id: int
-    parent_record: int | None = None
+    parent_record: int | None
     whom: int | None = None
     created_at: str | None = None
     updated_at: str | None = None
@@ -50,9 +50,26 @@ class WebhookRecordData(BaseModel):
     prepayment: int | None = None
     prepayment_date: str | None = None
     prepayment_url: str | None = None
-    custom_field1: str = ""
-    custom_field2: str = ""
-    url: str = ""
+    custom_field1: str | None = None
+    custom_field2: str | None = None
+    custom_field3: str | None = None
+    custom_field4: str | None = None
+    custom_field5: str | None = None
+    custom_field6: str | None = None
+    custom_field7: str | None = None
+    custom_field8: str | None = None
+    custom_field9: str | None = None
+    custom_field10: str | None = None
+    custom_field11: str | None = None
+    custom_field12: str | None = None
+    custom_field13: str | None = None
+    custom_field14: str | None = None
+    custom_field15: str | None = None
+    custom_field16: str | None = None
+    custom_field17: str | None = None
+    custom_field18: str | None = None
+    custom_field19: str | None = None
+    custom_field20: str | None = None
 
     @field_validator("price", "status", "duration", "prepayment", mode="before")
     @classmethod
