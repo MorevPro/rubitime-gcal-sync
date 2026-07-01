@@ -128,6 +128,20 @@ class CalendarService:
                 .execute()
             )
         except HttpError as exc:
+            # Если ошибка 409 (duplicate), попытаться обновить событие
+            if exc.resp.status == 409 and effective_event_id:
+                log.info(
+                    "google_calendar_duplicate_detected",
+                    google_event_id=effective_event_id,
+                    operation="updating",
+                )
+                try:
+                    result = self.update_event(effective_event_id, payload)
+                    self._log_response("update", effective_event_id, result)
+                    return result
+                except HttpError as update_exc:
+                    self._log_error("update", effective_event_id, update_exc)
+                    raise
             self._log_error("insert", effective_event_id, exc)
             raise
         self._log_response("insert", result.get("id", effective_event_id), result)
