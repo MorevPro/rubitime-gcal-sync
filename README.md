@@ -1,6 +1,6 @@
 # Rubitime → Google Calendar
 
-[![Unlicense License](https://img.shields.io/github/license/vsouza/rubitime-gcal-integration)](https://unlicense.org/)
+[![Unlicense License](https://img.shields.io/github/license/MorevPro/rubitime-gcal-sync)](https://unlicense.org/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Docker](https://img.shields.io/badge/docker-%230f9.svg?logo=docker&logoColor=white)](https://www.docker.com/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?logo=fastapi)](https://fastapi.tiangolo.com/)
