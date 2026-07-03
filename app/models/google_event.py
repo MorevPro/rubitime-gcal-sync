@@ -46,11 +46,17 @@ class GoogleEventPayload(BaseModel):
         return body
 
     @staticmethod
-    def google_event_id(record_id: int | str) -> str:
+    def google_event_id(record_id: int | str, event: str | None = None) -> str:
         """Детерминированный id для Calendar API."""
         rid = str(record_id).strip()
         if not rid.isdigit():
             raise ValueError(
                 f"record_id должен быть числом для Google event id, получено: {record_id!r}"
             )
-        return rid.zfill(5) if len(rid) < 5 else rid
+        rid_zfilled = rid.zfill(5) if len(rid) < 5 else rid
+        
+        # Добавляем префикс "booked" для webhook-записей
+        if event and event.startswith("event-"):
+            return f"booked{rid_zfilled}"
+        
+        return rid_zfilled

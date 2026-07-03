@@ -1,0 +1,28 @@
+@startuml
+actor Rubitime
+participant "Rubitime-GCal\nService" as Service
+participant "Google\nCalendar API" as Calendar
+
+Rubitime -> Service: POST /webhook\n event-create-record / event-update-record
+activate Service
+Service -> Service: Parse & validate webhook\n extract record_id, event, data
+Service -> Service: Build GoogleEventPayload\n summary, description, location, dates
+Service -> Calendar: getEvent(event_id)
+activate Calendar
+alt Event exists
+  Calendar --> Service: Event data
+  Service -> Service: Prepare update payload
+  Service -> Calendar: updateEvent()
+  Calendar --> Service: Updated event
+else Event not found
+  Calendar --> Service: 404 Not Found
+  Service -> Service: Prepare insert payload
+  Service -> Calendar: insertEvent()
+  Calendar --> Service: Created event
+end
+deactivate Calendar
+
+Service --> Rubitime: 200 OK\n{"ok": true, "accepted": true}
+deactivate Service
+
+@enduml

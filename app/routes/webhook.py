@@ -14,8 +14,8 @@ from app.utils.logger import get_logger
 log = get_logger(__name__)
 
 
-def google_event_id(record_id: int) -> str:
-    return GoogleEventPayload.google_event_id(record_id)
+def google_event_id(record_id: int, event: str | None = None) -> str:
+    return GoogleEventPayload.google_event_id(record_id, event)
 
 
 def _upsert_event(
@@ -89,7 +89,7 @@ def process_webhook(event: str, record_id: int, data: dict[str, Any]) -> None:
     settings = get_settings()
     calendar = CalendarService(settings)
     formatter = EventFormatter(settings)
-    event_id = google_event_id(record_id)
+    event_id = google_event_id(record_id, event)
 
     log.info(
         "webhook_processing_started",

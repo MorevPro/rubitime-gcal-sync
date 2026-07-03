@@ -1,0 +1,51 @@
+@startuml
+actor Scheduler
+participant "Rubitime-GCal\nService" as Service
+participant "Rubitime API" as Rubitime
+participant "Google\nCalendar API" as Calendar
+
+Scheduler -> Service: sync_once()\nEvery N minutes (default: 300s)
+activate Service
+Service -> Service: Check configuration\n calendar_id, api_key, branch_id, etc.
+
+alt Configuration OK
+  Service -> Rubitime: POST /api2/get-schedule\n{rk, branch_id, cooperator_id,\nservice_id, only_available}
+  activate Rubitime
+  Rubitime --> Service: {status: "ok", data: {dates: {times: {slots}}}}
+  deactivate Rubitime
+  
+  Service -> Service: Parse available slots\nextract date+time combinations
+  Service -> Service: Build slot events\n ID: availableYYYYMMDDHHMM
+  
+  Service -> Calendar: listEvents()\ntimeMin, timeMax, privateExtendedProperty
+  activate Calendar
+  Calendar --> Service: [{id, summary, start, end}, ...]
+  deactivate Calendar
+  
+  Service -> Service: Filter slot events\n by ID prefix "available"
+  
+  loop Delete existing slot events
+    Service -> Calendar: deleteEvent(event_id)
+    activate Calendar
+    Calendar --> Service: 204 No Content
+    deactivate Calendar
+    Service -> Service: Log deleted event
+  end
+  
+  loop Create new slot events
+    Service -> Service: Build event for slot\n duration: 1 hour\n status: tentative\n transparency: transparent\n colorId: 8
+    Service -> Calendar: insertEvent(payload)
+    activate Calendar
+    Calendar --> Service: Created event with ID
+    deactivate Calendar
+    Service -> Service: Log created event
+  end
+  
+  Service --> Scheduler: Sync completed\n{status: "ok", created_events: N, deleted_events: M}
+  deactivate Service
+else Configuration Missing
+  Service --> Scheduler: Sync skipped\n{status: "skipped", reason: "missing_configuration"}
+  deactivate Service
+end
+
+@enduml

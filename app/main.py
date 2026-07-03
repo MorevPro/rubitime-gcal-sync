@@ -241,7 +241,7 @@ async def webhook(request: Request) -> JSONResponse:
         "webhook_accepted",
         operation=payload.event,
         record_id=payload.record_id,
-        google_event_id=GoogleEventPayload.google_event_id(payload.record_id),
+        google_event_id=GoogleEventPayload.google_event_id(payload.record_id, payload.event),
     )
 
     return _response(
