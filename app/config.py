@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 
 
 _ROOT = Path(__file__).resolve().parent.parent
-load_dotenv(_ROOT / ".env", override=False)
+load_dotenv(_ROOT / ".env", override=False, encoding="utf-8-sig")
 
 
 def _env(key: str, default: str = "") -> str:

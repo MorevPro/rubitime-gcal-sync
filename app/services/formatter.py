@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from app.config import Settings
@@ -123,7 +123,6 @@ class EventFormatter:
             f"Телефон клиента: {_as_str(data.get('phone'))}",
             f"Email клиента: {_as_str(data.get('email'))}",
             f"Дата рождения: {_as_str(data.get('custom_field1'))}",
-            f"Пол: {_as_str(data.get('custom_field2'))}",
         ]
 
         # Дополнительные поля: дата рождения и имя ребенка (отображаются только если не пустые)
@@ -136,6 +135,7 @@ class EventFormatter:
             lines.append(f"Имя ребенка: {custom_field4}")
 
         lines.extend([
+            f"Пол: {_as_str(data.get('custom_field2'))}",
             f"Комментарий клиента: {_as_str(data.get('comment'))}",
             f"Комментарий из карточки клиента: {_as_str(data.get('cardcomment') or data.get('card_comment') or data.get('client_comment'))}",
             "",
