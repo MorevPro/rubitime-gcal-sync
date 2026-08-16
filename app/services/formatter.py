@@ -124,11 +124,23 @@ class EventFormatter:
             f"Email клиента: {_as_str(data.get('email'))}",
             f"Дата рождения: {_as_str(data.get('custom_field1'))}",
             f"Пол: {_as_str(data.get('custom_field2'))}",
+        ]
+
+        # Дополнительные поля: дата рождения и имя ребенка (отображаются только если не пустые)
+        custom_field3 = _as_str(data.get('custom_field3'))
+        if custom_field3:
+            lines.append(f"Дата рождения ребенка: {custom_field3}")
+
+        custom_field4 = _as_str(data.get('custom_field4'))
+        if custom_field4:
+            lines.append(f"Имя ребенка: {custom_field4}")
+
+        lines.extend([
             f"Комментарий клиента: {_as_str(data.get('comment'))}",
             f"Комментарий из карточки клиента: {_as_str(data.get('cardcomment') or data.get('card_comment') or data.get('client_comment'))}",
             "",
             f"Открыть запись: https://rubitime.ru/profile/analytic/history/{record_id}",
-        ]
+        ])
 
         description = "\n".join(lines).rstrip()
 
